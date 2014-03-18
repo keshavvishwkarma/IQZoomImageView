@@ -105,25 +105,42 @@ static inline CGFloat ZoomScaleThatFits(CGSize target, CGSize source)
     self.zoomScale = self.minimumZoomScale;
 }
 
+//- (void)layoutSubviews
+//{
+//	[super layoutSubviews];
+//    
+//	CGSize boundsSize = self.bounds.size;
+//	CGRect viewFrame = _imageView.frame;
+//    
+//	if (viewFrame.size.width < boundsSize.width)
+//		viewFrame.origin.x = (((boundsSize.width - viewFrame.size.width) / 2.0f) + self.contentOffset.x);
+//	else
+//		viewFrame.origin.x = 0.0f;
+//    
+//	if (viewFrame.size.height < boundsSize.height)
+//		viewFrame.origin.y = (((boundsSize.height - viewFrame.size.height) / 2.0f) + self.contentOffset.y);
+//	else
+//		viewFrame.origin.y = 0.0f;
+//    
+//	_imageView.frame = viewFrame;
+//}
+
 - (void)layoutSubviews
 {
-	[super layoutSubviews];
+    [super layoutSubviews];
     
-	CGSize boundsSize = self.bounds.size;
-	CGRect viewFrame = _imageView.frame;
+    CGRect boundsRect = UIEdgeInsetsInsetRect(self.bounds, self.contentInset);
+    CGRect proposedContentFrame = CGRectMake(0, 0, self.contentSize.width, self.contentSize.height);
     
-	if (viewFrame.size.width < boundsSize.width)
-		viewFrame.origin.x = (((boundsSize.width - viewFrame.size.width) / 2.0f) + self.contentOffset.x);
-	else
-		viewFrame.origin.x = 0.0f;
+    if (boundsRect.size.width>proposedContentFrame.size.width)
+        proposedContentFrame.origin.x = ((boundsRect.size.width-proposedContentFrame.size.width+self.bounds.origin.x/2.0)/2.0);
     
-	if (viewFrame.size.height < boundsSize.height)
-		viewFrame.origin.y = (((boundsSize.height - viewFrame.size.height) / 2.0f) + self.contentOffset.y);
-	else
-		viewFrame.origin.y = 0.0f;
+    if (boundsRect.size.height>proposedContentFrame.size.height)
+        proposedContentFrame.origin.y = ((boundsRect.size.height-proposedContentFrame.size.height+self.bounds.origin.y/2.0)/2.0);
     
-	_imageView.frame = viewFrame;
+    _imageView.center = CGPointMake(CGRectGetMidX(proposedContentFrame), CGRectGetMidY(proposedContentFrame));
 }
+
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
